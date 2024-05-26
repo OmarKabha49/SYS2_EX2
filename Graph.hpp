@@ -44,9 +44,14 @@ namespace ariel {
         // Arithmetic operators
         Graph operator+(const Graph& other) const;
         Graph& operator+=(const Graph& other);
-        Graph operator-() const;
         Graph operator-(const Graph& other) const;
         Graph& operator-=(const Graph& other);
+        Graph operator*(const Graph& other) const;
+        Graph& operator*=(int scalar);
+        Graph& operator/=(int scalar);
+        Graph operator*(int scalar) const;
+        Graph operator/(int scalar) const;
+        Graph operator-() const;
 
         // Comparison operators
         bool operator==(const Graph& other) const;
@@ -62,14 +67,20 @@ namespace ariel {
         Graph& operator--(); // Prefix decrement
         Graph operator--(int); // Postfix decrement
 
-        // Scalar multiplication
-        Graph operator*(int scalar) const;
-
-        // Graph multiplication
-        Graph operator*(const Graph& other) const;
-
         // Output operator
-        friend ostream& operator<<(ostream& os, const Graph& graph);
+        friend ostream& operator<<(ostream& os, const Graph& graph){
+            for (const auto& row : graph.Matrix) {
+                os << "[";
+                for (size_t j = 0; j < row.size(); ++j) {
+                    os << row[j];
+                    if (j < row.size() - 1) {
+                        os << ", ";
+                    }
+                }
+            os << "]\n";
+            }
+            return os<<"\n";
+        }
     };
 
 }  // namespace ariel

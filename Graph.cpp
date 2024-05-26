@@ -37,6 +37,7 @@ void Graph::printGraph() const {
     cout << "Graph with " << numVertices << " vertices and " << numEdges << " edges.\n";
 }
 
+
 // Get the adjacency matrix
 const vector<vector<int>>& Graph::getMatrix() const {
     return Matrix;
@@ -53,6 +54,8 @@ const vector<vector<int>>& Graph::getAdjList() const {
 }
 
 // Arithmetic operators
+
+// Addition operator
 Graph Graph::operator+(const Graph& other) const {
     if (numVertices != other.numVertices) {
         throw invalid_argument("Cannot add graphs of different sizes.");
@@ -67,22 +70,13 @@ Graph Graph::operator+(const Graph& other) const {
     return result;
 }
 
+// Addition assignment operator
 Graph& Graph::operator+=(const Graph& other) {
     *this = *this + other;
     return *this;
 }
 
-Graph Graph::operator-() const {
-    Graph result = *this;
-    for (size_t i = 0; i < numVertices; ++i) {
-        for (size_t j = 0; j < numVertices; ++j) {
-            result.Matrix[i][j] = -result.Matrix[i][j];
-        }
-    }
-    result.loadGraph(result.Matrix);
-    return result;
-}
-
+// Subtraction operator
 Graph Graph::operator-(const Graph& other) const {
     if (numVertices != other.numVertices) {
         throw invalid_argument("Cannot subtract graphs of different sizes.");
@@ -97,9 +91,76 @@ Graph Graph::operator-(const Graph& other) const {
     return result;
 }
 
+// Subtraction assignment operator
 Graph& Graph::operator-=(const Graph& other) {
     *this = *this - other;
     return *this;
+}
+
+// Multiplication operator (element-wise)
+Graph Graph::operator*(const Graph& other) const {
+    if (numVertices != other.numVertices) {
+        throw invalid_argument("Cannot multiply graphs of different sizes.");
+    }
+    vector<vector<int>> resultMatrix(numVertices, vector<int>(numVertices, 0));
+    for (size_t i = 0; i < numVertices; ++i) {
+        for (size_t j = 0; j < numVertices; ++j) {
+            for (size_t k = 0; k < numVertices; ++k) {
+                resultMatrix[i][j] += Matrix[i][k] * other.Matrix[k][j];
+            }
+        }
+    }
+    Graph result;
+    result.loadGraph(resultMatrix);
+    return result;
+}
+
+// Scalar multiplication assignment operator
+Graph& Graph::operator*=(int scalar) {
+    for (size_t i = 0; i < numVertices; ++i) {
+        for (size_t j = 0; j < numVertices; ++j) {
+            Matrix[i][j] *= scalar;
+        }
+    }
+    loadGraph(Matrix);
+    return *this;
+}
+
+// Scalar division assignment operator
+Graph& Graph::operator/=(int scalar) {
+    for (size_t i = 0; i < numVertices; ++i) {
+        for (size_t j = 0; j < numVertices; ++j) {
+            Matrix[i][j] /= scalar;
+        }
+    }
+    loadGraph(Matrix);
+    return *this;
+}
+
+// Scalar multiplication operator
+Graph Graph::operator*(int scalar) const {
+    Graph result = *this;
+    result *= scalar;
+    return result;
+}
+
+// Scalar division operator
+Graph Graph::operator/(int scalar) const {
+    Graph result = *this;
+    result /= scalar;
+    return result;
+}
+
+// Unary minus operator
+Graph Graph::operator-() const {
+    Graph result = *this;
+    for (size_t i = 0; i < numVertices; ++i) {
+        for (size_t j = 0; j < numVertices; ++j) {
+            result.Matrix[i][j] = -result.Matrix[i][j];
+        }
+    }
+    result.loadGraph(result.Matrix);
+    return result;
 }
 
 // Comparison operators
@@ -166,44 +227,3 @@ Graph Graph::operator--(int) {
     return temp;
 }
 
-// Scalar multiplication
-Graph Graph::operator*(int scalar) const {
-    Graph result = *this;
-    for (size_t i = 0; i < numVertices; ++i) {
-        for (size_t j = 0; j < numVertices; ++j) {
-            result.Matrix[i][j] *= scalar;
-        }
-    }
-    result.loadGraph(result.Matrix);
-    return result;
-}
-
-// Graph multiplication
-Graph Graph::operator*(const Graph& other) const {
-    if (numVertices != other.numVertices) {
-        throw invalid_argument("Cannot multiply graphs of different sizes.");
-    }
-    vector<vector<int>> resultMatrix(numVertices, vector<int>(numVertices, 0));
-    for (size_t i = 0; i < numVertices; ++i) {
-        for (size_t j = 0; j < numVertices; ++j) {
-            for (size_t k = 0; k < numVertices; ++k) {
-                resultMatrix[i][j] += Matrix[i][k] * other.Matrix[k][j];
-            }
-        }
-    }
-    Graph result;
-    result.loadGraph(resultMatrix);
-    return result;
-}
-
-// Output operator
-ostream& operator<<(ostream& os, const Graph& graph) {
-    os << "Adjacency Matrix:\n";
-    for (const auto& row : graph.getMatrix()) {
-        for (int val : row) {
-            os << val << " ";
-        }
-        os << "\n";
-    }
-    return os;
-}

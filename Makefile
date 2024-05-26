@@ -1,3 +1,6 @@
+# 315481721
+# kabhao47@gmail.com
+
 CXX = clang++
 CXXFLAGS = -std=c++11
 INCLUDES = -I.
